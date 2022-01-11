@@ -1,0 +1,22 @@
+service: hello-dynamodb
+frameworkVersion: '1'
+
+provider:
+  name: aws
+  logs:
+    httpApi: true
+  stackTags:
+    Environment: ${self:custom.stage}
+  runtime: nodejs10.x
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1 # Make sure AWS-SDK reuses HTTP connections
+    DATA_STORE_ARN: datastore-${self:provider.stage}
+
+plugins:
+  - serverless-offline
+
+functions:
+  ${file(./functions/api/hello/get/function.yml)}
+
+resources:
+  ${file(./infra/s3/dynamic-assets-bucket.yml)}
